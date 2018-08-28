@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<style>
+	.popup{ position: absolute;  box-shadow: 1px 1px 50px rgba(0,0,0,.3); border-radius: 2px; padding: 10px; z-index: 2; background: #fff;}
+	.popup .title{ font-size: 14px; line-height: 30px; height: 30px;}
+	.popup .close{ padding: 0 5px; float: right; cursor: pointer;}
+	.popup .btn{ text-align: right; margin: 10px 0;}
+	.popup .btn input{ background: none; border: none; outline: none; background: #1e9fff; color: #fff; width: 60px; height: 30px; border-radius: 4px;}
+	#mark{ position: absolute; background: #000; opacity: 0.5; filter(opacity=50); top: 0; left: 0; z-index: 1;}
+</style>
+<script>
+	window.onload=function(){
+		var oBtn=document.getElementById('btn');
+		var aInp=oBtn.getElementsByTagName('input');
+		
+		aInp[0].onclick=function(){
+			var pop1=new Popup();
+			pop1.init({
+				iNow:0,
+				title:'登录'
+			})
+		}
+		
+		aInp[1].onclick=function(){
+			var pop1=new Popup();
+			pop1.init({
+				iNow:1,
+				title:'提示',
+				w:200,
+				dir:'left'
+			})
+		}
+		
+		aInp[2].onclick=function(){
+			var pop1=new Popup();
+			pop1.init({
+				iNow:2,
+				title:'消息',
+				w:100,
+				h:300,
+				dir:'right'
+			})
+		}
+		
+		aInp[3].onclick=function(){
+			var pop1=new Popup();
+			pop1.init({
+				iNow:3,
+				title:'评价',
+				mark:true
+			})
+		}
+	}
+	
+	function Popup(){
+		this.obj=null;
+		this.oMark=null;
+		this.settings={
+			w:300,
+			h:300,
+			dir:'center',
+			title:'',
+			mark:false
+		}
+	};
+	
+	Popup.prototype.json={};
+	Popup.prototype.init=function(opt){
+		extend(this.settings,opt);
+		if(this.json[opt.iNow]==undefined){
+			this.json[opt.iNow]=true;
+		}
+		if(this.json[opt.iNow]){
+			this.create();
+			this.fnclose();
+			this.json[opt.iNow]=false;
+		}
+		
+	};
+	
+	Popup.prototype.create=function(){
+		this.obj=document.createElement('div');
+		this.obj.className='popup';
+		this.obj.innerHTML=`<div class="title">${this.settings.title}<span class="close">X</span></div>
+							<div class="content-box">我是内容</div>
+							<div class="btn">
+								<input type="button" value="确定" />
+							</div>`
+		document.body.appendChild(this.obj);
+		this.setdata();
+	}
+	
+	Popup.prototype.setdata=function(){
+		this.obj.style.width=this.settings.w+'px';
+		this.obj.style.height=this.settings.h+'px';
+		if(this.settings.dir=='center'){
+			this.obj.style.left=(viewWidth()-this.obj.clientWidth)/2+'px';
+			this.obj.style.top=(viewHeight()-this.obj.clientHeight)/2+'px';
+		}else if(this.settings.dir=='right'){
+			this.obj.style.left=viewWidth()-this.obj.clientWidth+'px';
+			this.obj.style.top=viewHeight()-this.obj.clientHeight+'px';
+		}else if(this.settings.dir=='left'){
+			this.obj.style.left=0;
+			this.obj.style.top=viewHeight()-this.obj.clientHeight+'px'
+		};
+		if(this.settings.mark){
+			this.creatMark();
+		}
+	};
+	
+	Popup.prototype.fnclose=function(){
+		var This=this;
+		var oClose=this.obj.querySelector('.close');
+		oClose.onclick=function(){
+			document.body.removeChild(This.obj);
+			if(This.settings.mark){
+				document.body.removeChild(This.oMark);
+			}
+			
+			This.json[This.settings.iNow]=true;
+		}
+	}
+	
+	Popup.prototype.creatMark=function(){
+		this.oMark=document.createElement('div');
+		this.oMark.id='mark';
+		document.body.appendChild(this.oMark);
+		this.oMark.style.width=viewWidth()+'px';
+		this.oMark.style.height=viewHeight()+'px';
+	}
+	
+	function viewWidth(){
+		return document.documentElement.clientWidth;
+	}
+	
+	function viewHeight(){
+		return document.documentElement.clientHeight;
+	}
+	
+	function extend(obj1,obj2){
+		for(var attr in obj2){
+			obj1[attr]=obj2[attr];
+		}
+	}
+	
+</script>
+<body>
+	<div class="btn" id="btn">
+		<input type="button" value="center" data-dir="center"/>
+		<input type="button" value="left" data-dir="left"/>
+		<input type="button" value="right" data-dir="right"/>
+		<input type="button" value="mask" data-dir="center"/>
+	</div>
+<!--	<div class="popup">
+		<div class="title">登录<span class="close">X</span></div>
+		<div class="content-box">我是内容</div>
+		<div class="btn">
+			<input type="button" value="确定" />
+		</div>
+	</div>
+-->
+</body>
+<script>
+	
+</script>
+</html>
